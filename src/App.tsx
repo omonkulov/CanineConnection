@@ -1,24 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react';
+import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
+import { authState } from './recoil/auth';
+import { API } from './api/takehomeApi';
 
 function App() {
+  const setAuth = useSetRecoilState(authState);
+  const auth = useRecoilValue(authState);
+
+  function handleLoginSuccess(data:GenericApiResponse){
+    console.log(data)
+  }
+  
+  function handleLoginFail(data:GenericApiResponse){
+    console.log(data)
+  }
+  
+  useEffect(() => {
+    API.login({
+      email: "test@gmail.coom",
+      name: "test"
+    },
+    handleLoginSuccess,
+    handleLoginFail,
+    )
+  }, [])
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <h3 className='bg-red-200'>Expected</h3>
     </div>
   );
 }
