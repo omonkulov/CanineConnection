@@ -12,6 +12,17 @@ interface AuthLogin {
     name: string;
 }
 
+interface authData {
+    name: string,
+    loggedIn: boolean,
+    timeLoggedIn: number,
+}
+
+interface AuthDataResponse extends GenericApiResponse{
+    authData: authData;
+}
+
+
 interface Location {
     zip_code: string;
     latitude: number;

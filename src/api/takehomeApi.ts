@@ -8,7 +8,7 @@ const DOMAIN = "https://frontend-take-home-service.fetch.com"
  * @param callbackFailed callback function when the request fails
  * @param callbackSuccess callback function when the request is success
  */
-async function login(data: AuthLogin, callbackFailed: (res:GenericApiResponse) => void, callbackSuccess: (res:GenericApiResponse) => void) {
+async function login(data: AuthLogin, callbackFailed: (res:AuthDataResponse) => void, callbackSuccess: (res:GenericApiResponse) => void) {
     // Fetch config
     let url = DOMAIN + "/auth/login"
     let options:RequestInit = {
@@ -23,8 +23,20 @@ async function login(data: AuthLogin, callbackFailed: (res:GenericApiResponse) =
 
     if (response.ok) {
         console.log("Logged in", response);
+        const authData: AuthDataResponse = {
+            status: "success",
+            httpStatus: response.status,
+            message: "",
+            authData: {
+                loggedIn: true,
+                name: data.name,
+                timeLoggedIn: Date.now()
+            }
+        }
         // call the callback function with the data
-        callbackFailed({status:"success", httpStatus: response.status,  message:""});
+        callbackFailed(authData);
+        // Set Local storage to persist 
+        localStorage.setItem("auth", JSON.stringify(authData))
     } else {
         console.log("Failed to log in", response);
          // call the callback function with the data
@@ -32,6 +44,34 @@ async function login(data: AuthLogin, callbackFailed: (res:GenericApiResponse) =
     }
 }
 
+
+
+/**
+ * This api function will make a request to proected path to see if user is still still logged in has valid cookie. Then it will the callback functions
+ * with a boolean param. This function is as async. This function should be used rarely. 
+ * @param callbackFailed callback function when the request fails
+
+ */
+async function authCheck(callback: (res:boolean) => void) {
+    // Fetch config
+    let url = DOMAIN
+    let options:RequestInit = {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+        credentials: 'include'
+    }
+
+    // Fetch
+    const response = await fetch(url, options);
+
+    if (response.ok) {
+        callback(true);
+    } else {
+        callback(false);
+    }
+}
+
 export const API = {
-    login
+    login,
+    authCheck
 }

@@ -1,19 +1,17 @@
 import { atom } from "recoil";
 
 
-interface authData {
-    name: string,
-    loggedIn: boolean,
-    timeLoggedIn: string,
-}
 
-const defaultAtomValue: authData = {
+const defaultAuthState: authData = {
     name: "",
     loggedIn: false,
-    timeLoggedIn: ""
+    timeLoggedIn: -1
 }
 
 export const authState = atom({
     key: "auth",
-    default: defaultAtomValue,
+    default: defaultAuthState,
 });
+
+
+export {defaultAuthState}
