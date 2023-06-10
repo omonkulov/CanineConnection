@@ -7,7 +7,7 @@ interface DogProps {
 
 export default function Dog(props: DogProps) {
   return (
-    <div className="rounded overflow-hidden shadow m-4 bg-gray-100" onClick={() => props.onClick(props.dog)}>
+    <div style={{height: "500px", width:"250px"}} className="rounded overflow-hidden shadow m-4 bg-gray-100" onClick={() => props.onClick(props.dog)}>
       <div className="">
         <img className="w-full object-cover h-64 w-64" src={props.dog.img} alt="Sunset in the mountains" />
       </div>
@@ -18,6 +18,7 @@ export default function Dog(props: DogProps) {
       <div className="px-3 pt-2 pb-2">
         <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{"Age: " + props.dog.age}</span>
         <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{"ZipCode: " + props.dog.zip_code}</span>
+        <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{"Breed: " + props.dog.breed}</span>
       </div>
       <button className="rounded p-2 m-3 inline block bg-orange-500 text-white" onClick={() => props.onClick(props.dog)}>
         Add to list

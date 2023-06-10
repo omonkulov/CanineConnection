@@ -99,30 +99,34 @@ async function getDogIDsBySearch(data: SearchRequestModal, callbackSuccess: (res
 
   const isDataEmpty = Object.keys(data).length === 0;
 
-  console.log(data);
+  console.log("Filters: ", data);
   if (!isDataEmpty) {
     let params = new URLSearchParams();
 
     if (data.breeds) {
-      params.append("breeds", data.breeds + "");
+      data.breeds.forEach((val) => {
+        params.append("breeds", val);
+      })
     }
     if (data.zipCodes) {
-      params.append("zipCodes", data.zipCodes + "");
+      data.zipCodes.forEach((val) => {
+        params.append("zipCodes", val);
+      })
     }
     if (data.ageMin) {
-      params.append("ageMin=", data.ageMin + "");
+      params.append("ageMin", data.ageMin + "");
     }
     if (data.ageMax) {
-      params.append("ageMax=", data.ageMax + "");
+      params.append("ageMax", data.ageMax + "");
     }
     if (data.size) {
-      params.append("size=", data.size + "");
+      params.append("size", data.size + "");
     }
     if (data.from) {
-      params.append("from=", data.from + "");
+      params.append("from", data.from + "");
     }
     if (data.sort) {
-      params.append("sort=", data.sort);
+      params.append("sort", data.sort);
     }
 
     url += "?" + params.toString();

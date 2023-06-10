@@ -19,16 +19,17 @@ export default function SearchResults(props: ResultsProps) {
     let requestModel: SearchRequestModal = {
       breeds: props.breeds.length > 0 ? props.breeds : undefined,
       ageMin: props.minAge > -1 ? props.minAge : undefined,
-      ageMax: props.maxAge > 0 ? props.minAge : undefined,
+      ageMax: props.maxAge > 0 ? props.maxAge : undefined,
       zipCodes: props.zipCodes.length > 0 ? props.zipCodes : undefined,
     };
 
     API.getDogIDsBySearch(
       requestModel,
-      (data) => {
+      (ids) => {
         API.getDogObjectsFromIDs(
-          data.resultIds,
+          ids.resultIds,
           (data) => {
+            console.log("Search ID: ", ids.resultIds, data);
             setdogs(data);
           },
           (res) => {
@@ -36,7 +37,7 @@ export default function SearchResults(props: ResultsProps) {
           }
         );
         //Success
-        console.log(data.resultIds);
+        console.log(ids.resultIds);
       },
       (res) => {
         if (res.httpStatus === 401) authExpiredHelper();
