@@ -99,29 +99,30 @@ async function getDogIDsBySearch(data: SearchRequestModal, callbackSuccess: (res
 
   const isDataEmpty = Object.keys(data).length === 0;
 
+  console.log(data);
   if (!isDataEmpty) {
     let params = new URLSearchParams();
 
     if (data.breeds) {
-      params.append("breeds", JSON.stringify(data.breeds));
+      params.append("breeds", data.breeds + "");
     }
     if (data.zipCodes) {
-      params.append("zipCodes", JSON.stringify(data.zipCodes));
+      params.append("zipCodes", data.zipCodes + "");
     }
     if (data.ageMin) {
-      params.append("ageMin=", data.ageMin.toString());
+      params.append("ageMin=", data.ageMin + "");
     }
     if (data.ageMax) {
-      params.append("ageMax=", data.ageMax.toString());
+      params.append("ageMax=", data.ageMax + "");
     }
     if (data.size) {
-      params.append("size=", data.size.toString());
+      params.append("size=", data.size + "");
     }
     if (data.from) {
-      params.append("from=", data.from.toString());
+      params.append("from=", data.from + "");
     }
     if (data.sort) {
-      params.append("sort=", data.sort.toString());
+      params.append("sort=", data.sort);
     }
 
     url += "?" + params.toString();
@@ -152,20 +153,48 @@ async function getDogIDsBySearch(data: SearchRequestModal, callbackSuccess: (res
   }
 }
 
-async function getDogObjectsFromIDs(callbackSuccess: (res: Array<Dog>) => void, callbackFailed?: (res: GenericApiResponse) => void) {
+async function getDogObjectsFromIDs(data: Array<string>, callbackSuccess: (res: Array<Dog>) => void, callbackFailed?: (res: GenericApiResponse) => void) {
   // Fetch config
-  let url = DOMAIN + "/dogs/breeds";
+  let url = DOMAIN + "/dogs";
   let options: RequestInit = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     credentials: "include",
+    body: JSON.stringify(data),
   };
 
   // Fetch
   const response = await fetch(url, options);
-  let content = await response.text();
-  let array = JSON.parse(content);
 
   if (response.ok && response) {
     // call the callback function with the data
+    let content = await response.text();
+    let array = JSON.parse(content);
+    callbackSuccess(array);
+  } else {
+    console.log("Failed to log in", response);
+    // call the callback function with the data
+    if (callbackFailed) callbackFailed({ status: "failed", httpStatus: response.status, message: response.statusText });
+  }
+}
+
+async function getLocationObjectsFromIDs(data: Array<string>, callbackSuccess: (res: Array<Dog>) => void, callbackFailed?: (res: GenericApiResponse) => void) {
+  // Fetch config
+  let url = DOMAIN + "/dogs";
+  let options: RequestInit = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(data),
+  };
+
+  // Fetch
+  const response = await fetch(url, options);
+
+  if (response.ok && response) {
+    // call the callback function with the data
+    let content = await response.text();
+    let array = JSON.parse(content);
     callbackSuccess(array);
   } else {
     console.log("Failed to log in", response);

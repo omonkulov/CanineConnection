@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { authState } from "../recoil/auth";
+import { authExpiredHelper, authState } from "../recoil/auth";
 import { useRecoilValue } from "recoil";
 import { Navigate } from "react-router-dom";
 import { API } from "../api/takehomeApi";
@@ -21,9 +21,8 @@ export default function Home() {
       (data) => {
         console.log(data);
       },
-      () => {
-        localStorage.removeItem("auth");
-        window.location.reload();
+      (res) => {
+        if (res.httpStatus === 401) authExpiredHelper();
       }
     );
   }, []);

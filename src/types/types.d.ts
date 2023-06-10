@@ -39,7 +39,7 @@ interface AuthDataResponse extends GenericApiResponse {
 //#region search
 /** Typescript interface for response data from rquest to /dogs/search */
 interface SearchResponseData {
-  resultIds: [string];
+  resultIds: Array<string>;
   total: number;
   next: string;
   prev: string;
@@ -48,13 +48,13 @@ interface SearchResponseData {
 interface SearchResponseDataModel extends GenericApiResponse {
   next: { size: number; from: number } | undefined;
   prev: { size: number; from: number } | undefined;
-  resultIds: [string];
+  resultIds: Array<string>;
   total: number;
 }
 
 interface SearchRequestModal {
-  breeds?: [string];
-  zipCodes?: [string];
+  breeds?: Array<string>;
+  zipCodes?: Array<string>;
   ageMin?: number;
   ageMax?: number;
   size?: number;
