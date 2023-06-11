@@ -1,4 +1,9 @@
-const DOMAIN = "https://frontend-take-home-service.fetch.com";
+const DOMAIN:string = process.env.REACT_APP_DOMAIN ?? "";
+
+if (DOMAIN === "") {
+  console.log("Failed to fetch domain from .env, found: ", DOMAIN)
+}
+
 
 /**
  * This api function will make a request to auth with the provided data. Then it will call one of the callback functions
