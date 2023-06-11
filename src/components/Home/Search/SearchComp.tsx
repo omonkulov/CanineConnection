@@ -1,10 +1,8 @@
-import { Fragment, useEffect, useRef, useState } from "react";
-import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
-import Badge from "../../Badge";
+import { Fragment,  useState } from "react";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
+import Badge from "../../Navbar/Badge";
 import SearchResults from "./SearchResults";
-import Pagination from "../../Pagination";
 
 const sortOptions: Array<{ name: string; val: "asc" | "desc" }> = [
   { name: "Acending", val: "asc" },
@@ -19,6 +17,10 @@ interface SearchCompProps {
   breeds?: Array<string>;
 }
 
+/** 
+ * Search component. Contains the search filters and the search result rendering component
+ * Basically handles searching dogs.
+ */
 export default function SearchComp({ breeds }: SearchCompProps) {
   const [openFilters, setopenFilters] = useState(false);
   const [breedOptions, setBreedOptions] = useState(Array<string>);

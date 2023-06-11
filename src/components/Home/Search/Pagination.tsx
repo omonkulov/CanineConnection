@@ -6,6 +6,7 @@ interface PaginationProps {
   goToNextPage: () => void;
   goToPrevPage: () => void;
 }
+/** Component for pagination. Used in search component */
 export default function Pagination(props: PaginationProps) {
   return (
     <div className="w-full flex justify-center">

@@ -104,3 +104,15 @@ interface MatchDogsModel {
   dog: Dog | undefined;
   location: LocationDog | undefined;
 }
+
+interface DogBreedsResponseModel extends GenericApiResponse {
+  data: Array<string>;
+}
+
+interface GetDogObjectResponseModel extends GenericApiResponse {
+  data: Array<Dog>;
+}
+
+interface Match {
+  match: string;
+}

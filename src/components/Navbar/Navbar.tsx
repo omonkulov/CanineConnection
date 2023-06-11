@@ -1,14 +1,14 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
-import PuppySvg from "./PuppySvg";
-import { API } from "../api/takehomeApi";
+import PuppySvg from "../PuppySvg";
+import { API } from "../../api/takehomeApi";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { authState } from "../recoil/auth";
-import { dogState } from "../recoil/dogs";
-import { defaultAuthState } from "../helpers/defaultValues";
-import { authExpiredHelper } from "../helpers/helperFunctions";
+import { authState } from "../../recoil/auth";
+import { dogState } from "../../recoil/dogs";
+import { defaultAuthState } from "../../helpers/defaultValues";
+import { authExpiredHelper } from "../../helpers/helperFunctions";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -17,6 +17,7 @@ function classNames(...classes: any) {
 interface NavbarProps {
   currentPagePath: string;
 }
+/** Navigation bar for navigation to different pages. Also shows number dogs in the wishlist. */
 export default function Navbar({ currentPagePath }: NavbarProps) {
   let navigate = useNavigate();
   let auth = useRecoilValue(authState);

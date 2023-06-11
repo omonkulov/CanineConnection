@@ -3,7 +3,7 @@ import App from "../App";
 import LogIn from "../components/Login";
 import Home from "../components/Home/Home";
 import Error from "../components/Error";
-import MyMatches from "../components/MyMatches";
+import MyMatches from "../components/Matches/MyMatches";
 
 /**
  * Setting up routes

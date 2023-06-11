@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PuppySvg from "./PuppySvg";
 import { API } from "../api/takehomeApi";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -7,6 +7,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { defaultAuthState, expirationTime } from "../helpers/defaultValues";
 import { isValidEmail } from "../helpers/helperFunctions";
 
+/** Login Page */
 export default function LogIn() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -57,31 +58,33 @@ export default function LogIn() {
    * This way we don't ping the server every time user refreshes the page.
    * @param data localstorage raw value
    */
-  const recoverAuthState = async (data: string) => {
-    // Parse the raw value info and convert it into type
-    const localAuth = JSON.parse(data) as unknown as AuthDataResponse;
-    if (localAuth && localAuth.authData && localAuth.authData.loggedIn) {
-      // Valid date instance
-      const currentTime = Date.now();
-      const timePassed = currentTime - localAuth.authData.timeLoggedIn;
-      if (timePassed < expirationTime) {
-        // 45 min did not pass yet; instance is good
-        setAuth(localAuth.authData);
-        navigate("/home");
-      } else {
-        // 45 min did pass; need to check if session is still good
-        if (await API.authCheck()) {
-          // It is valid; update the local storage time and copy it over to the state
-          setAuth({ ...localAuth.authData, timeLoggedIn: currentTime });
+  const recoverAuthState = useCallback(
+    async (data: string) => {
+      // Parse the raw value info and convert it into type
+      const localAuth = JSON.parse(data) as unknown as AuthDataResponse;
+      if (localAuth && localAuth.authData && localAuth.authData.loggedIn) {
+        // Valid date instance
+        const currentTime = Date.now();
+        const timePassed = currentTime - localAuth.authData.timeLoggedIn;
+        if (timePassed < expirationTime) {
+          // 45 min did not pass yet; instance is good
+          setAuth(localAuth.authData);
           navigate("/home");
         } else {
-          // The localstorage auth instance is not valid; user will need to login to continue
-          console.log("Cookie is not valid and failed to reach protected path, user should sign in manually");
-          setAuth(defaultAuthState);
+          // 45 min did pass; need to check if session is still good
+          if (await API.authCheck()) {
+            // It is valid; update the local storage time and copy it over to the state
+            setAuth({ ...localAuth.authData, timeLoggedIn: currentTime });
+            navigate("/home");
+          } else {
+            // The localstorage auth instance is not valid; user will need to login to continue
+            console.log("Cookie is not valid and failed to reach protected path, user should sign in manually");
+            setAuth(defaultAuthState);
+          }
         }
       }
-    }
-  };
+    }, [setAuth, navigate]
+  );
 
   useEffect(() => {
     // If the user is already logged; skip
@@ -94,7 +97,7 @@ export default function LogIn() {
 
     // User is not logged in but there is an auth instance in the localstorage
     recoverAuthState(data);
-  }, [setAuth, auth.loggedIn, navigate]);
+  }, [setAuth, auth.loggedIn, navigate, recoverAuthState]);
 
   if (auth.loggedIn) {
     return <Navigate to={"/home"} />;

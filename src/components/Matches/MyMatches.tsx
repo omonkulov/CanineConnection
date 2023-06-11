@@ -1,26 +1,34 @@
 import React from "react";
-import Navbar from "./Navbar";
+import Navbar from "../Navbar/Navbar";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { dogState } from "../recoil/dogs";
+import { dogState } from "../../recoil/dogs";
 import WishtListDog from "./WishListDog";
 import MatchListDog from "./MatchListDogs";
-import { API } from "../api/takehomeApi";
-import { authState } from "../recoil/auth";
+import { API } from "../../api/takehomeApi";
+import { authState } from "../../recoil/auth";
 import { Navigate } from "react-router-dom";
 
+/** Allows the user to manage and submit their wishlist and for matching a dog. And shows the  */
 export default function MyMatches() {
+  // Wish list dogs state
   const wishList = useRecoilValue(dogState.wishListState);
   const setWishList = useSetRecoilState(dogState.wishListState);
+  // Matched dogs state
   const matchList = useRecoilValue(dogState.matchListState);
   const setMatchList = useSetRecoilState(dogState.matchListState);
   const auth = useRecoilValue(authState);
 
+  /**
+   * Removes the dog from the wish list
+   * @param id id of the dog to remove the wish list
+   */
   const removeFromWishList = (id: string) => {
     setWishList((prev) => prev.filter((dog) => dog.id !== id));
   };
 
+  /** Handles submitting wishlist to get a match  */
   const handleSubmit = async () => {
-    let matchedDogObj = await API.matchDogsAndGetLocation(wishList);
+    let matchedDogObj = await API.getMatchedDog(wishList);
     console.log(matchedDogObj);
     setMatchList((prev) => [...prev, matchedDogObj]);
     setWishList([]);
@@ -31,9 +39,9 @@ export default function MyMatches() {
   }
 
   return (
-    <div className="flex flex-col h-full w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="flex flex-col h-full w-full">
       <Navbar currentPagePath="/matches" />
-      <div className="flex flex-col grow">
+      <div className="flex flex-col grow w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col px-4 my-3" style={{ minHeight: "382px" }}>
           <h2 className="sm:text-2xl tracking-tight text-gray-900 my-3"> Dogs I would like to match with.... </h2>
           <div className="inline-flex overflow-x-auto py-2">
