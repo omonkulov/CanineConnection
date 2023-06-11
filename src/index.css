@@ -7,32 +7,53 @@
 }
 
 @keyframes bounce {
-  0%{
+  0% {
     transform: translate(0, -50px);
   }
   50% {
     transform: translate(0, 0);
   }
-  100%{
+  100% {
     transform: translate(0, -40px);
   }
 }
 
-
-.puppy_svg { 
+.puppy_svg {
   height: 100%;
-	width: auto;
+  width: auto;
 }
 
-.primary_text_color{
-  color: #D99E82;
+.primary_text_color {
+  color: #d99e82;
 }
 
-.goldCard{
-  background: radial-gradient(ellipse farthest-corner at right bottom, #FEDB37 0%, #FDB931 8%, #9f7928 30%, #8A6E2F 40%, transparent 80%),
-              radial-gradient(ellipse farthest-corner at left top, #FFFFFF 0%, #FFFFAC 8%, #D1B464 25%, #5d4a1f 62.5%, #9c8140 100%);
+.goldCard {
+  background: radial-gradient(ellipse farthest-corner at right bottom, #fedb37 0%, #fdb931 8%, #9f7928 30%, #8a6e2f 40%, transparent 80%),
+    radial-gradient(ellipse farthest-corner at left top, #ffffff 0%, #ffffac 8%, #d1b464 25%, #5d4a1f 62.5%, #9c8140 100%);
 }
 
-.goldCardShadow{
+.goldCardShadow {
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px, rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #000000 #ffffff;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #000000;
+  border-radius: 10px;
+  border: 3px solid #ffffff;
 }

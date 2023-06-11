@@ -31,7 +31,7 @@ export default function MyMatches() {
   }
 
   return (
-    <div className="flex flex-col h-full w-full">
+    <div className="flex flex-col h-full w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <Navbar currentPagePath="/matches" />
       <div className="flex flex-col grow">
         <div className="flex flex-col px-4 my-3" style={{ minHeight: "382px" }}>
