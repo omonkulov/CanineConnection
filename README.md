@@ -83,7 +83,11 @@ Match a dog
 7. Match dogs will have more location information exposed.
 8. You can have multiple dogs matched.
 
+## Info
+This was a take home assignment. 
 
+## Warning
+There were some places where I worked around to mimic a real app. For instance having the user stay logged in when they refresh the website.
 
 
 
