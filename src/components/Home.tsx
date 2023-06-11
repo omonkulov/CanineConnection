@@ -8,18 +8,13 @@ import SearchComp from "./SearchComp";
 
 export default function Home() {
   const auth = useRecoilValue(authState);
-  const [breeds, setBreeds] = useState([""])
+  const [breeds, setBreeds] = useState([""]);
 
   useEffect(() => {
-    API.getDogBreeds((array) => {
-      setBreeds(array)
-      console.log(array);
-    });
-
-    API.getDogIDsBySearch(
-      {},
-      (data) => {
-        console.log(data);
+    if (!auth.loggedIn) return;
+    API.getDogBreeds(
+      (array) => {
+        setBreeds(array);
       },
       (res) => {
         if (res.httpStatus === 401) authExpiredHelper();
@@ -34,7 +29,7 @@ export default function Home() {
   return (
     <div>
       <Navbar currentPagePath="/home" />
-      <SearchComp breeds={breeds}/>
+      <SearchComp breeds={breeds} />
     </div>
   );
 }

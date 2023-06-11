@@ -44,6 +44,26 @@ async function login(data: AuthLogin, callbackSuccess: (res: AuthDataResponse) =
 }
 
 /**
+ * This api function will make a request to log out the user.
+ * This will invalidate the auth cookie.
+ */
+async function logout() {
+  // Fetch config
+  let url = DOMAIN + "/auth/logout";
+  let options: RequestInit = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  };
+
+  // Fetch
+  await fetch(url, options);
+
+  // Remove user from local storage
+  localStorage.removeItem("auth");
+}
+
+/**
  * This api function will make a request to proected path to see if user is still still logged in has valid cookie. Then it will the callback functions
  * with a boolean param. This function is as async. This function should be used rarely. 
  * @param callback callback function when the request fails
@@ -78,7 +98,7 @@ async function getDogBreeds(callbackSuccess: (res: Array<string>) => void, callb
   // Fetch
   const response = await fetch(url, options);
 
-  if (response.ok && response) {
+  if (response.ok) {
     let content = await response.text();
     let array = JSON.parse(content);
     // call the callback function with the data
@@ -106,12 +126,12 @@ async function getDogIDsBySearch(data: SearchRequestModal, callbackSuccess: (res
     if (data.breeds) {
       data.breeds.forEach((val) => {
         params.append("breeds", val);
-      })
+      });
     }
     if (data.zipCodes) {
       data.zipCodes.forEach((val) => {
         params.append("zipCodes", val);
-      })
+      });
     }
     if (data.ageMin) {
       params.append("ageMin", data.ageMin + "");
@@ -126,7 +146,7 @@ async function getDogIDsBySearch(data: SearchRequestModal, callbackSuccess: (res
       params.append("from", data.from + "");
     }
     if (data.sort) {
-      params.append("sort", data.sort);
+      params.append("sort", "name:" + data.sort);
     }
 
     url += "?" + params.toString();
@@ -135,7 +155,7 @@ async function getDogIDsBySearch(data: SearchRequestModal, callbackSuccess: (res
   // Fetch
   const response = await fetch(url, options);
 
-  if (response.ok && response) {
+  if (response.ok) {
     let content = await response.text();
     let parsedObj = <SearchResponseData>JSON.parse(content);
 
@@ -170,7 +190,7 @@ async function getDogObjectsFromIDs(data: Array<string>, callbackSuccess: (res: 
   // Fetch
   const response = await fetch(url, options);
 
-  if (response.ok && response) {
+  if (response.ok) {
     // call the callback function with the data
     let content = await response.text();
     let array = JSON.parse(content);
@@ -182,9 +202,30 @@ async function getDogObjectsFromIDs(data: Array<string>, callbackSuccess: (res: 
   }
 }
 
-async function getLocationObjectsFromIDs(data: Array<string>, callbackSuccess: (res: Array<Dog>) => void, callbackFailed?: (res: GenericApiResponse) => void) {
+interface Match {
+  match: string;
+}
+async function matchADogFromIDs(data: Array<string>): Promise<Match> {
   // Fetch config
-  let url = DOMAIN + "/dogs";
+  let url = DOMAIN + "/dogs/match";
+  let options: RequestInit = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(data),
+  };
+
+  // Fetch
+  const response = await fetch(url, options);
+  let content = await response.text();
+  let match: Match = JSON.parse(content);
+
+  return match;
+}
+
+async function getLocationObjectsFromIDs(data: Array<string>, callbackSuccess: (res: Array<Location>) => void, callbackFailed?: (res: GenericApiResponse) => void) {
+  // Fetch config
+  let url = DOMAIN + "/locations";
   let options: RequestInit = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -195,7 +236,7 @@ async function getLocationObjectsFromIDs(data: Array<string>, callbackSuccess: (
   // Fetch
   const response = await fetch(url, options);
 
-  if (response.ok && response) {
+  if (response.ok) {
     // call the callback function with the data
     let content = await response.text();
     let array = JSON.parse(content);
@@ -205,6 +246,40 @@ async function getLocationObjectsFromIDs(data: Array<string>, callbackSuccess: (
     // call the callback function with the data
     if (callbackFailed) callbackFailed({ status: "failed", httpStatus: response.status, message: response.statusText });
   }
+}
+
+
+
+async function matchDogsAndGetLocation(data: Array<Dog>): Promise<MatchDogsModel> {
+  let dogsIDs = data.map((dog) => dog.id);
+  let matchedID = await matchADogFromIDs(dogsIDs);
+  let matchedDogObj = data.find((dog) => dog.id === matchedID.match);
+
+  // Fetch config
+  let url = DOMAIN + "/locations";
+  let options: RequestInit = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify([matchedDogObj?.zip_code]),
+  };
+
+  const response = await fetch(url, options);
+
+  if (response.ok) {
+    let content = await response.text();
+    let locationObj: LocationDog = JSON.parse(content)[0];
+    console.log(locationObj);
+
+    return {
+      dog: data.find((dog) => dog.id === matchedID.match),
+      location: locationObj,
+    };
+  }
+  return {
+    dog: undefined,
+    location: undefined,
+  };
 }
 
 /**
@@ -229,9 +304,14 @@ function getFromAndSizeFromURL(params: string): { from: number; size: number } |
 
 export const API = {
   login,
+  logout,
   authCheck,
 
   getDogBreeds,
   getDogIDsBySearch,
   getDogObjectsFromIDs,
+
+  matchADogFromIDs,
+  getLocationObjectsFromIDs,
+  matchDogsAndGetLocation
 };

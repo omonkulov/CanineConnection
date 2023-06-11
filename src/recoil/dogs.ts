@@ -1,25 +1,19 @@
 import { atom } from "recoil";
 
-
-
-const defaultAuthState: authData = {
-    name: "",
-    loggedIn: false,
-    timeLoggedIn: -1
-}
-
-export const authState = atom({
-    key: "auth",
-    default: defaultAuthState,
+const test: Array<Dog> = []
+const wishListState = atom({
+  key: "withlist",
+  default: test,
 });
 
-/**
- * Use this when an API request returns 401 (Permission denied) and you are sure you have access to that end point.
- * This is way to detect if the cookie has expiered. This is just a workaround to make it work in the quickes time.
- */
-function authExpiredHelper(){
-    localStorage.removeItem("auth");
-    window.location.reload();
-}
 
-export {defaultAuthState, authExpiredHelper}
+let defaultMatchList: Array<MatchDogsModel> = [{
+  location: undefined,
+  dog: undefined,
+}]
+const matchListState = atom({
+  key: "matchlist",
+  default: defaultMatchList,
+});
+
+export const dogState = { wishListState, matchListState };

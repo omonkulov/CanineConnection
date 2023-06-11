@@ -71,11 +71,15 @@ interface PaginationState {
   firtPage: 0;
   lastPage: number;
 }
-//#region
+//#endregion
+
+//#region Dogs Matching
+
+//#endregion
 
 //#region models
 /**  Typescript interface for the Location objects returned by the API */
-interface Location {
+interface LocationDog {
   zip_code: string;
   latitude: number;
   longitude: number;
@@ -88,9 +92,15 @@ interface Location {
 interface Dog {
   id: string;
   img: string;
-  name: String;
+  name: string;
   age: number;
   zip_code: string;
   breed: string;
 }
 //#endregion
+
+
+interface MatchDogsModel {
+  dog: Dog | undefined;
+  location: LocationDog | undefined;
+}

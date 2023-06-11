@@ -3,6 +3,7 @@ import App from "../App";
 import LogIn from "../components/Login";
 import Home from "../components/Home";
 import Error from "../components/Error";
+import MyMatches from "../components/MyMatches";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
   {
     path: "/home",
     element: <Home />,
+  },
+  {
+    path: "/matches",
+    element: <MyMatches />,
   },
 ]);
 

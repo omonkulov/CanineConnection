@@ -1,13 +1,14 @@
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 import Badge from "./Badge";
 import SearchResults from "./SearchResults";
+import Pagination from "./Pagination";
 
-const sortOptions = [
-  { name: "Acending", val: "acs", current: true },
-  { name: "Decending", val: "dec", current: false },
+const sortOptions: Array<{ name: string; val: "asc" | "desc" }> = [
+  { name: "Acending", val: "asc" },
+  { name: "Decending", val: "desc" },
 ];
 
 function classNames(...classes: string[]) {
@@ -25,7 +26,8 @@ export default function SearchComp({ breeds }: SearchCompProps) {
   const [minAge, setMinAge] = useState(-1);
   const [maxAge, setMaxAge] = useState(-1);
   const [zipCode, setZipCode] = useState("");
-  const [shouldRefetch, setShouldRefetch] = useState(false);
+  const [shouldRefetch, setShouldRefetch] = useState(true);
+  const [sort, setSort] = useState<"asc"| "desc">("asc");
 
   const filters = [
     {
@@ -44,7 +46,7 @@ export default function SearchComp({ breeds }: SearchCompProps) {
     <div className="bg-white">
       <div>
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-baseline justify-between border-b border-gray-200 pb-2 pt-24">
+          <div className="flex items-baseline justify-between border-b border-gray-200 pb-2 pt-8">
             <h1 className="text-lg font-bold tracking-tight text-gray-90 lg:text-4xl">Search</h1>
 
             <div className="flex items-center">
@@ -69,8 +71,13 @@ export default function SearchComp({ breeds }: SearchCompProps) {
                     <div className="py-1">
                       {sortOptions.map((option) => (
                         <Menu.Item key={option.name}>
-                          {({ active }) => (
-                            <p className={classNames(option.current ? "font-medium text-gray-900" : "text-gray-500", active ? "bg-gray-100" : "", "block px-4 py-2 text-sm")}>{option.name}</p>
+                          {() => (
+                            <p
+                              onClick={() => setSort(option.val)}
+                              className={classNames(option.val === sort ? "font-medium text-gray-900" : "text-gray-500", option.val === sort ? "bg-gray-100" : "", "block px-4 py-2 text-sm")}
+                            >
+                              {option.name}
+                            </p>
                           )}
                         </Menu.Item>
                       ))}
@@ -212,10 +219,9 @@ export default function SearchComp({ breeds }: SearchCompProps) {
                   </Disclosure>
                 ))}
               </form>
-
               {/* Product grid */}
-              <div className="col-span-3 flex flex-wrap">
-                <SearchResults breeds={breedOptions} zipCodes={zipCodes} minAge={minAge} maxAge={maxAge} shouldRefetch={shouldRefetch} setShouldRefetch={setShouldRefetch} />
+              <div className="col-span-3 flex flex-col justify-center">
+                <SearchResults breeds={breedOptions} zipCodes={zipCodes} minAge={minAge} maxAge={maxAge} shouldRefetch={shouldRefetch} setShouldRefetch={setShouldRefetch} sort={sort} />
               </div>
             </div>
           </section>
