@@ -26,7 +26,6 @@ async function login(data: AuthLogin): Promise<AuthDataResponse> {
   // Fetch
   const response = await fetch(url, options);
   if (response.ok) {
-    console.log("Logged in", response);
     const authData: AuthDataResponse = {
       status: "success",
       httpStatus: response.status,
