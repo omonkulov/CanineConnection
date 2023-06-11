@@ -5,8 +5,10 @@ import { useNavigate } from "react-router-dom";
 import PuppySvg from "./PuppySvg";
 import { API } from "../api/takehomeApi";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { authExpiredHelper, authState, defaultAuthState } from "../recoil/auth";
+import { authState } from "../recoil/auth";
 import { dogState } from "../recoil/dogs";
+import { defaultAuthState } from "../helpers/defaultValues";
+import { authExpiredHelper } from "../helpers/helperFunctions";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");

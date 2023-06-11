@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import PuppySvg from "./components/PuppySvg";
 
+/** Landing page. Users will see this page first */
 export default function App() {
   const nav = useNavigate();
   return (
@@ -22,16 +23,15 @@ export default function App() {
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Canine Connection</h1>
             <p className="mt-6 text-lg leading-8 text-gray-600">
-            Step into a world of pure companionship and unshakeable loyalty. 
-            <br/>
-            Here, at Canine Connection, we've carefully curated a network of over <span className="text-orange-500">10,000 dogs</span> of diverse breeds and unique personalities, all in need of a loving home.
-            <br/>
-            Our mission is simple: Connecting you with your perfect four-legged friend while advocating for responsible adoption over breeding.
+              Step into a world of pure companionship and unshakeable loyalty.
+              <br />
+              Here, at Canine Connection, we've carefully curated a network of over <span className="text-orange-500">10,000 dogs</span> of diverse breeds and unique personalities, all in need of a
+              loving home.
+              <br />
+              Our mission is simple: Connecting you with your perfect four-legged friend while advocating for responsible adoption over breeding.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6 cursor-pointer" onClick={() => nav("/login")}>
-              <p
-                className="rounded-md bg-orange-500 px-3.5 py-2.5 text-sm font-semibold  cursor-pointer text-white shadow-sm hover:bg-orange-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
+              <p className="rounded-md bg-orange-500 px-3.5 py-2.5 text-sm font-semibold cursor-pointer text-white shadow-sm hover:bg-orange-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                 Get started
               </p>
             </div>

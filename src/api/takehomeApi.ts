@@ -1,9 +1,8 @@
-const DOMAIN:string = process.env.REACT_APP_DOMAIN ?? "";
+const DOMAIN: string = process.env.REACT_APP_DOMAIN ?? "";
 
 if (DOMAIN === "") {
-  console.log("Failed to fetch domain from .env, found: ", DOMAIN)
+  console.log("Failed to fetch domain from .env, found: ", DOMAIN);
 }
-
 
 /**
  * This api function will make a request to auth with the provided data. Then it will call one of the callback functions
@@ -12,7 +11,7 @@ if (DOMAIN === "") {
  * @param callbackSuccess callback function when the request is success
  * @param callbackFailed callback function when the request fails
  */
-async function login(data: AuthLogin, callbackSuccess: (res: AuthDataResponse) => void, callbackFailed?: (res: GenericApiResponse) => void) {
+async function login(data: AuthLogin): Promise<AuthDataResponse> {
   // Fetch config
   let url = DOMAIN + "/auth/login";
   let options: RequestInit = {
@@ -24,7 +23,6 @@ async function login(data: AuthLogin, callbackSuccess: (res: AuthDataResponse) =
 
   // Fetch
   const response = await fetch(url, options);
-
   if (response.ok) {
     console.log("Logged in", response);
     const authData: AuthDataResponse = {
@@ -37,15 +35,17 @@ async function login(data: AuthLogin, callbackSuccess: (res: AuthDataResponse) =
         timeLoggedIn: Date.now(),
       },
     };
-    // call the callback function with the data
-    callbackSuccess(authData);
     // Set Local storage to persist
     localStorage.setItem("auth", JSON.stringify(authData));
-  } else {
-    console.log("Failed to log in", response);
-    // call the callback function with the data
-    if (callbackFailed) callbackFailed({ status: "failed", httpStatus: response.status, message: response.statusText });
+    return authData;
   }
+  console.log("Failed to log in", response);
+  return {
+    status: "failed",
+    httpStatus: response.status,
+    message: response.statusText,
+    authData: undefined,
+  };
 }
 
 /**
@@ -72,9 +72,8 @@ async function logout() {
  * This api function will make a request to proected path to see if user is still still logged in has valid cookie. Then it will the callback functions
  * with a boolean param. This function is as async. This function should be used rarely. 
  * @param callback callback function when the request fails
-
  */
-async function authCheck(callback: (res: boolean) => void) {
+async function authCheck(): Promise<boolean> {
   // Fetch config
   let url = DOMAIN;
   let options: RequestInit = {
@@ -85,12 +84,7 @@ async function authCheck(callback: (res: boolean) => void) {
 
   // Fetch
   const response = await fetch(url, options);
-
-  if (response.ok) {
-    callback(true);
-  } else {
-    callback(false);
-  }
+  return response.ok
 }
 
 async function getDogBreeds(callbackSuccess: (res: Array<string>) => void, callbackFailed?: (res: GenericApiResponse) => void) {
@@ -253,8 +247,6 @@ async function getLocationObjectsFromIDs(data: Array<string>, callbackSuccess: (
   }
 }
 
-
-
 async function matchDogsAndGetLocation(data: Array<Dog>): Promise<MatchDogsModel> {
   let dogsIDs = data.map((dog) => dog.id);
   let matchedID = await matchADogFromIDs(dogsIDs);
@@ -318,5 +310,5 @@ export const API = {
 
   matchADogFromIDs,
   getLocationObjectsFromIDs,
-  matchDogsAndGetLocation
+  matchDogsAndGetLocation,
 };

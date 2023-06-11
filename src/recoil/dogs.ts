@@ -1,19 +1,16 @@
 import { atom } from "recoil";
+import { defaultMatchListState, defaultWishListState } from "../helpers/defaultValues";
 
-const test: Array<Dog> = []
+/** State for keeping track of all the dogs that are added to wishlist. */
 const wishListState = atom({
   key: "withlist",
-  default: test,
+  default: defaultWishListState,
 });
 
-
-let defaultMatchList: Array<MatchDogsModel> = [{
-  location: undefined,
-  dog: undefined,
-}]
+/** State for keeping track of all the dogs that "matched" with the user */
 const matchListState = atom({
   key: "matchlist",
-  default: defaultMatchList,
+  default: defaultMatchListState,
 });
 
 export const dogState = { wishListState, matchListState };

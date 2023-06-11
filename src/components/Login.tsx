@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import PuppySvg from "./PuppySvg";
 import { API } from "../api/takehomeApi";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { authState, defaultAuthState } from "../recoil/auth";
+import { authState } from "../recoil/auth";
 import { Navigate, useNavigate } from "react-router-dom";
+import { defaultAuthState, expirationTime } from "../helpers/defaultValues";
+import { isValidEmail } from "../helpers/helperFunctions";
 
 export default function LogIn() {
   const [name, setName] = useState("");
@@ -14,17 +16,13 @@ export default function LogIn() {
   const auth = useRecoilValue(authState);
   let navigate = useNavigate();
 
-  const isValidEmail = (email: string): boolean => {
-    const re =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email);
-  };
-
+  /** Handles login request success; sets the auth state */
   const handleLoginSuccess = (data: AuthDataResponse) => {
     setFailed(false);
-    setAuth(data.authData);
+    setAuth(data.authData ?? defaultAuthState);
   };
 
+  /** Handles login request failing; if there is an error message it will display it on the screen */
   const handleLoginFail = (data: GenericApiResponse) => {
     setFailed(true);
     if (data.message && data.message.length > 0) {
@@ -34,11 +32,9 @@ export default function LogIn() {
     }
   };
 
-  const handleSignIn = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  /** Handles sign in button being pressed */
+  const handleSignIn = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    console.log(name, email);
-
-    // Try to login
     if (name.length <= 0 || email.length <= 0) {
       setFailed(true);
       setErrorMessage("Failed to login. One of the fields are empty.");
@@ -46,60 +42,58 @@ export default function LogIn() {
       setFailed(true);
       setErrorMessage("Failed to login. Not a valid email.");
     } else {
-      API.login(
-        {
-          email: email,
-          name: name,
-        },
-        handleLoginSuccess,
-        handleLoginFail
-      );
+      // Form passed validation; make a request
+      const response = await API.login({ email, name });
+      if (response.authData && response.status === "success") {
+        handleLoginSuccess(response);
+        return;
+      }
+      handleLoginFail(response);
+    }
+  };
+
+  /**
+   * Work-around to keep user logged in when page is refreshed.
+   * This way we don't ping the server every time user refreshes the page.
+   * @param data localstorage raw value
+   */
+  const recoverAuthState = async (data: string) => {
+    // Parse the raw value info and convert it into type
+    const localAuth = JSON.parse(data) as unknown as AuthDataResponse;
+    if (localAuth && localAuth.authData && localAuth.authData.loggedIn) {
+      // Valid date instance
+      const currentTime = Date.now();
+      const timePassed = currentTime - localAuth.authData.timeLoggedIn;
+      if (timePassed < expirationTime) {
+        // 45 min did not pass yet; instance is good
+        setAuth(localAuth.authData);
+        navigate("/home");
+      } else {
+        // 45 min did pass; need to check if session is still good
+        if (await API.authCheck()) {
+          // It is valid; update the local storage time and copy it over to the state
+          setAuth({ ...localAuth.authData, timeLoggedIn: currentTime });
+          navigate("/home");
+        } else {
+          // The localstorage auth instance is not valid; user will need to login to continue
+          console.log("Cookie is not valid and failed to reach protected path, user should sign in manually");
+          setAuth(defaultAuthState);
+        }
+      }
     }
   };
 
   useEffect(() => {
     // If the user is already logged; skip
-    if (auth.loggedIn) {
-      return;
-    }
+    if (auth.loggedIn) return;
 
+    // Check localstorage for any instance
     let data = localStorage.getItem("auth");
-
     // If there is nothing in local storage; skip
-    if (!data) {
-      return;
-    }
+    if (!data) return;
 
-    // Parse the local storage auth info and convert it into type
-    let localAuth = JSON.parse(data) as unknown as AuthDataResponse;
-
-    // If the data is valid then start copying the over the localstorage into auth state
-    if (localAuth && localAuth.authData && localAuth.authData.loggedIn) {
-      console.log("Found a valid auth instance in localstorage for ", localAuth.authData.name)
-      // Check if the last time logged in not earlier than 3 hours
-      let currentTime = Date.now();
-      if (currentTime - localAuth.authData.timeLoggedIn < 10800000) {
-        // Copy the valid and unexpired auth instance into the state and redirect the user to the home page
-        console.log("Copying auth instance into the state...")
-        setAuth(localAuth.authData);
-        navigate("/home");
-      } else {
-        // It has been over 3 hours since last time logged in; check if the local storage auth is still valid
-        console.log("3 hours passed since the last time logged in. Will check if cookie still valid")
-        API.authCheck((res) => {
-          if (res) {
-            // It is valid; update the local storage time and copy it over to the state
-            console.log("Cookie is valid, updating the time to ", currentTime)
-            setAuth({ ...localAuth.authData, timeLoggedIn: currentTime });
-            navigate("/home");
-          } else {
-            // The localstorage auth instance is not valid; user will need to login to continue
-            console.log("Cookie is not valid and failed to reach protected path, user should sign in manually")
-            setAuth(defaultAuthState);
-          }
-        });
-      } 
-    }
+    // User is not logged in but there is an auth instance in the localstorage
+    recoverAuthState(data);
   }, [setAuth, auth.loggedIn, navigate]);
 
   if (auth.loggedIn) {
@@ -115,17 +109,12 @@ export default function LogIn() {
           </div>
         </div>
       </div>
-      <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-        Sign in to your account
-      </h2>
+      <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6">
           <div>
             <div className="flex items-center justify-between">
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
+              <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
                 Name
               </label>
             </div>
@@ -142,10 +131,7 @@ export default function LogIn() {
           </div>
 
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
+            <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
               Email address
             </label>
             <div className="mt-2">
@@ -172,11 +158,7 @@ export default function LogIn() {
           </div>
         </form>
       </div>
-      {failed && (
-        <p className="mt-10 text-center leading-9 tracking-tight text-red-300">
-          {errorMessage}
-        </p>
-      )}
+      {failed && <p className="mt-10 text-center leading-9 tracking-tight text-red-300">{errorMessage}</p>}
     </div>
   );
 }

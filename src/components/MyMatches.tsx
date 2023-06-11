@@ -36,7 +36,7 @@ export default function MyMatches() {
       <div className="flex flex-col grow">
         <div className="flex flex-col px-4 my-3" style={{ minHeight: "382px" }}>
           <h2 className="sm:text-2xl tracking-tight text-gray-900 my-3"> Dogs I would like to match with.... </h2>
-          <div className="inline-flex overflow-x-scroll py-2">
+          <div className="inline-flex overflow-x-auto py-2">
             {wishList.map((dog, key) => (
               <WishtListDog key={key} dog={dog} removeFromWishList={removeFromWishList} />
             ))}
@@ -52,7 +52,7 @@ export default function MyMatches() {
 
         <div className="flex flex-col px-4 my-3" style={{ minHeight: "400px" }}>
           <h2 className="sm:text-2xl tracking-tight text-gray-900 my-3"> Matched friends: </h2>
-          <div className="inline-flex overflow-x-scroll py-2 pl-8">
+          <div className="inline-flex overflow-x-auto py-2 pl-8">
             {matchList.map((dog, key) => (
               <MatchListDog key={key} dog={dog.dog} location={dog.location} />
             ))}

@@ -32,7 +32,7 @@ interface authData {
  * Used for when the auth is successful.
  */
 interface AuthDataResponse extends GenericApiResponse {
-  authData: authData;
+  authData: authData | undefined;
 }
 //#endregion
 

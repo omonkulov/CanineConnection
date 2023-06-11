@@ -11,7 +11,9 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
+    {/* Recoil: for state managment */}
     <RecoilRoot>
+      {/* React Router Dom: for handling routes */}
       <RouterProvider router={router}/>
     </RecoilRoot>
   </React.StrictMode>

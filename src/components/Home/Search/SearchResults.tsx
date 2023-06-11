@@ -1,8 +1,8 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { API } from "../api/takehomeApi";
-import Dog from "./Dog";
-import { authExpiredHelper } from "../recoil/auth";
-import Pagination from "./Pagination";
+import { API } from "../../../api/takehomeApi";
+import Dog from "../../Dog";
+import Pagination from "../../Pagination";
+import { authExpiredHelper } from "../../../helpers/helperFunctions";
 
 interface ResultsProps {
   minAge: number;

@@ -2,9 +2,9 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
-import Badge from "./Badge";
+import Badge from "../../Badge";
 import SearchResults from "./SearchResults";
-import Pagination from "./Pagination";
+import Pagination from "../../Pagination";
 
 const sortOptions: Array<{ name: string; val: "asc" | "desc" }> = [
   { name: "Acending", val: "asc" },

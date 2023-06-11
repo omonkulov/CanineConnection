@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { authExpiredHelper, authState } from "../recoil/auth";
+import { authState } from "../../recoil/auth";
 import { useRecoilValue } from "recoil";
 import { Navigate } from "react-router-dom";
-import { API } from "../api/takehomeApi";
-import Navbar from "./Navbar";
-import SearchComp from "./SearchComp";
+import { API } from "../../api/takehomeApi";
+import Navbar from "../Navbar";
+import SearchComp from "./Search/SearchComp";
+import { authExpiredHelper } from "../../helpers/helperFunctions";
 
 export default function Home() {
   const auth = useRecoilValue(authState);
