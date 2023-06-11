@@ -48,7 +48,7 @@ const buildURLParam = (data: SearchRequestModal): string => {
     params.append("from", data.from + "");
   }
   if (data.sort) {
-    params.append("sort", "name:" + data.sort);
+    params.append("sort", "breed:" + data.sort);
   }
 
   return ("?" + params.toString());
